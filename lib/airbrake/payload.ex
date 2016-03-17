@@ -5,6 +5,8 @@ defmodule Airbrake.Payload do
     url: Airbrake.Mixfile.project[:package][:links][:github],
   }
 
+  @mix_env Mix.env
+
   defstruct apiKey: nil, notifier: @notifier_info, errors: nil
 
   def new(exception, stacktrace, options \\ []) do
@@ -35,10 +37,10 @@ defmodule Airbrake.Payload do
     Map.put payload, :errors, [error]
   end
 
-  defp add_context(payload, nil), do: Map.put(payload, :context, %{environment: Mix.env})
+  defp add_context(payload, nil), do: Map.put(payload, :context, %{environment: @mix_env})
   defp add_context(payload, context) do
     if !context[:environment] do
-      context = Map.put(context, :environment, Mix.env)
+      context = Map.put(context, :environment, @mix_env)
     end
     Map.put(payload, :context, context)
   end
